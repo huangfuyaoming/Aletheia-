@@ -1,0 +1,159 @@
+/* Fixed stars remain easy to reach while the galaxy moves behind them. */
+.starfield { position: fixed; }
+/* Outlast the .7s flight so the page does not blink out from under the ribbon. */
+.world-content { transition: opacity .52s cubic-bezier(.3,.5,.2,1); }
+.panel-open .world-content { opacity: 0; pointer-events: none; }
+.stellar-button { position: relative; border-radius: 50%; isolation: isolate; flex-shrink: 0; }
+.star-navigation { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.navigation-star { position: absolute; width: 76px; height: 90px; pointer-events: auto; border-radius: 50%; isolation: isolate; }
+/* A warm bloom instead of a dark patch: the old #030304a6 ellipse was opaque and
+   perfectly still, so it read as a sticker over the moving starfield. Screen
+   blending lets passing stars show through the halo. */
+.navigation-star::before { content: ''; position: absolute; inset: -20px -30px -6px; z-index: -1; border-radius: 50%; background: radial-gradient(ellipse, #ffffff14 0 22%, #ffffff08 48%, transparent 72%); mix-blend-mode: screen; pointer-events: none; }
+/* Text stays legible via its own shadow, so the backing needs only a whisper. */
+.navigation-star::after { content: ''; position: absolute; inset: -10px -18px 4px; z-index: -2; border-radius: 50%; background: radial-gradient(ellipse, #03030459 6%, #0303041f 42%, transparent 68%); pointer-events: none; }
+/* Drifting with the sky, not pinned to the page. */
+.conversation-star { left: 16%; top: 26%; animation: star-drift 26s ease-in-out infinite; }
+.memory-star { right: 15%; top: 38%; animation: star-drift 31s ease-in-out -12s infinite reverse; }
+@keyframes star-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(-5px, -9px, 0); }
+  66% { transform: translate3d(6px, 5px, 0); }
+}
+.star-aura, .star-rays, .star-heart, .star-orbit { position: absolute; pointer-events: none; }
+.star-aura { inset: -12px -14px 2px; background: radial-gradient(circle, #ffffff16, #ffffff06 36%, transparent 65%); animation: star-glimmer 5s ease-in-out infinite; will-change: opacity; }
+.star-heart { width: 7px; height: 7px; top: 33px; left: 35px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px 3px #fffb, 0 0 22px 5px #fff5, 0 0 45px 12px #fff1; transition: box-shadow .4s; }
+.star-rays { width: 54px; height: 54px; left: 12px; top: 10px; transform: rotate(15deg); }
+.star-rays::before, .star-rays::after { content: ''; position: absolute; background: linear-gradient(transparent, #fffc 48%, #fff 50%, #fffc 52%, transparent); }
+.star-rays::before { width: 1px; height: 54px; left: 26px; top: 0; }
+.star-rays::after { height: 1px; width: 54px; top: 26px; left: 0; background: linear-gradient(90deg, transparent, #fffc 48%, #fff 50%, #fffc 52%, transparent); }
+.memory-star .star-rays { transform: rotate(45deg) scale(.72); }
+.memory-star .star-aura { animation-delay: -2s; }
+.star-orbit { width: 49px; height: 23px; border: 1px solid #fff6; border-top-color: #fff1; border-bottom-color: #fff2; border-radius: 50%; left: 14px; top: 25px; transform: rotate(-35deg); }
+.star-name { position: absolute; top: 68px; left: 0; right: 0; font: 12px/1.6 var(--serif); letter-spacing: 4px; padding-left: 4px; text-align: center; color: #fff; text-shadow: 0 1px 8px #000; opacity: 0; filter: blur(4px); transform: translateY(-5px); pointer-events: none; transition: opacity .3s, filter .4s, transform .4s; }
+.stellar-button:focus-visible .star-name { opacity: 1; filter: blur(0); transform: translateY(0); }
+.stellar-button:focus-visible .star-heart { box-shadow: 0 0 12px 4px #fff, 0 0 30px 8px #fff6, 0 0 60px 15px #fff2; }
+.stellar-button:focus-visible { outline: 1px dashed #fff9; outline-offset: 7px; }
+.stellar-button:active .star-heart { box-shadow: 0 0 15px 5px #fff, 0 0 35px 8px #fff8; }
+@keyframes star-glimmer { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+
+/* Conversation and history fill the viewport; inner text keeps a readable width. */
+.surface-backdrop { background: #03030470; backdrop-filter: none; -webkit-backdrop-filter: none; outline: none; }
+.surface-backdrop.fullscreen-backdrop { padding: 0; align-items: stretch; background: #03030452; }
+.surface.surface-fullscreen { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; padding: max(28px, env(safe-area-inset-top)) max(40px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(40px, env(safe-area-inset-left)); display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(ellipse at 50% 52%, #030304db 12%, #030304a6 45%, #03030415 100%); box-shadow: none; animation: fade-in .58s cubic-bezier(.3,.5,.2,1) both; }
+.surface-fullscreen > .surface-header { width: 100%; margin: 0 0 24px; flex-shrink: 0; }
+.surface-fullscreen .surface-header h2 { font-size: 25px; }
+.return-corner { position: fixed; top: 0; right: 0; width: 164px; height: 124px; padding-top: max(28px, env(safe-area-inset-top)); padding-right: max(40px, env(safe-area-inset-right)); display: flex; align-items: flex-start; justify-content: flex-end; z-index: 15; }
+.return-star { width: 56px; height: 56px; opacity: 0; transition: opacity .25s ease; }
+.return-corner.touch-revealed .return-star, .return-star:focus-visible { opacity: 1; animation: corner-star-reveal .95s ease-out both; }
+.return-star .star-heart { width: 6px; height: 6px; top: 25px; left: 25px; box-shadow: 0 0 7px 2px #fff9, 0 0 20px 5px #fff3; }
+.return-star .star-aura { inset: -10px; }
+.return-star .star-rays { left: 1px; top: 1px; opacity: .8; transform: rotate(0deg) scale(.24); transition: transform .28s ease-out; }
+.return-star:focus-visible .star-rays { animation: return-star-bloom .66s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes corner-star-reveal {
+  0% { opacity: 0; }
+  36% { opacity: 1; }
+  64% { opacity: .38; }
+  100% { opacity: 1; }
+}
+@keyframes return-star-bloom {
+  0% { transform: rotate(0deg) scale(.24); }
+  38% { transform: rotate(0deg) scale(.72); }
+  100% { transform: rotate(45deg) scale(.72); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .stellar-button:hover .star-name { opacity: 1; filter: blur(0); transform: translateY(0); }
+  .stellar-button:hover .star-heart { box-shadow: 0 0 12px 4px #fff, 0 0 30px 8px #fff6, 0 0 60px 15px #fff2; }
+  .return-corner:hover .return-star { opacity: 1; animation: corner-star-reveal .95s ease-out both; }
+  .return-star:hover .star-rays { animation: return-star-bloom .66s cubic-bezier(.2,.7,.2,1) both; }
+}
+.surface-fullscreen > :not(.surface-header) { width: min(100%, 820px); margin-left: auto; margin-right: auto; }
+.surface-fullscreen .message-list, .surface-fullscreen .history-body { flex: 1; min-height: 0; overscroll-behavior: contain; }
+.surface-fullscreen .message-list { padding: 28px 12px 18px; }
+.surface-fullscreen .chat-intro { min-height: 100%; justify-content: center; align-items: center; text-align: center; padding: 30px 0 52px; }
+.surface-fullscreen .chat-intro h3 { font-size: clamp(27px, 3.3vw, 42px); line-height: 1.7; letter-spacing: 4px; }
+.surface-fullscreen .chat-intro .little-light { width: 36px; height: 36px; margin: 10px 0 38px; }
+.surface-fullscreen .chat-intro p { font-size: 13px; }
+.surface-fullscreen .message { max-width: 90%; margin-bottom: 32px; }
+.surface-fullscreen .message p { font-size: 14px; line-height: 2; }
+.surface-fullscreen .message.user { max-width: 78%; }
+.surface-fullscreen .chat-composer { padding: 18px; background: #030304e6; }
+.surface-fullscreen .chat-composer textarea { font-size: 14px; }
+.surface-fullscreen .send-button { width: 40px; height: 40px; flex-shrink: 0; }
+.surface-fullscreen .composer-note, .surface-fullscreen .history-note, .surface-fullscreen > .error-message { flex-shrink: 0; }
+.surface-fullscreen .history-tabs { margin-bottom: 8px; }
+.surface-fullscreen .tab-strip button { padding: 17px 0; font-size: 13px; }
+.surface-fullscreen .history-open { min-height: 94px; padding: 22px 8px; gap: 22px; }
+.surface-fullscreen .history-open strong { font-size: 14px; }
+.surface-fullscreen .history-open small { font-size: 11px; }
+.surface-fullscreen .history-row > .icon-button { width: 44px; height: 44px; }
+.surface-fullscreen .history-body > .empty-state { min-height: 100%; }
+.surface-fullscreen .history-note { padding-top: 20px; }
+.surface-fullscreen .delete-confirm { gap: 22px; }
+.surface-fullscreen .delete-confirm button { min-height: 44px; padding: 6px; }
+
+@media (max-width: 700px) {
+  .conversation-star { left: 13%; top: max(20px, 7svh); }
+  .memory-star { right: 13%; top: max(36px, 9svh); }
+  .navigation-star { width: 64px; height: 84px; }
+  .star-heart { left: 29px; }
+  .star-rays { left: 6px; }
+  .star-orbit { left: 8px; }
+  .star-name { font-size: 11px; }
+  .return-corner { width: 124px; height: 108px; padding-top: max(16px, env(safe-area-inset-top)); padding-right: max(20px, env(safe-area-inset-right)); }
+  .surface.surface-fullscreen { padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+  .surface-fullscreen > .surface-header { margin-bottom: 14px; }
+  .surface-fullscreen .surface-header h2 { font-size: 22px; }
+  .surface-fullscreen .message-list { padding: 18px 2px 12px; }
+  .surface-fullscreen .chat-intro { padding: 28px 0; }
+  .surface-fullscreen .chat-intro h3 { font-size: 29px; letter-spacing: 2px; }
+  .surface-fullscreen .chat-intro p { font-size: 11px; }
+  .surface-fullscreen .chat-intro .little-light { margin-bottom: 24px; }
+  .surface-fullscreen .chat-composer { padding: 12px; }
+  .surface-fullscreen .chat-composer textarea { font-size: 16px; min-height: 44px; }
+  .surface-fullscreen .composer-note { font-size: 9px; padding-top: 9px; }
+  .surface-fullscreen .message p { font-size: 13px; }
+  .surface-fullscreen .message.user { max-width: 90%; }
+  .surface-fullscreen .history-open { gap: 14px; min-height: 88px; }
+  .surface-fullscreen .history-open strong { font-size: 12px; }
+  .surface-fullscreen .history-note { padding-top: 14px; font-size: 10px; }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  .surface.surface-fullscreen { padding-top: 12px; padding-bottom: 12px; }
+  .surface-fullscreen > .surface-header { margin-bottom: 8px; }
+  .surface-fullscreen .chat-intro { padding: 12px 0; }
+}
+
+/* One short, non-blocking ribbon follows each clicked star across the page. */
+.star-transit { position: fixed; inset: 0; z-index: 100; overflow: hidden; pointer-events: none; }
+.transit-origin, .transit-traveler, .transit-echo { position: absolute; left: var(--from-x); top: var(--from-y); }
+/* Glows are painted as gradients, not box-shadows: a scaled box-shadow is
+   re-rasterized every frame, which is what made the flight stutter. */
+.transit-origin { width: 80px; height: 80px; margin: -40px; border: 1px solid #fff6; border-radius: 50%; background: radial-gradient(circle, transparent 58%, #ffffff14 78%, transparent 100%); animation: transit-ripple .55s ease-out both; will-change: transform, opacity; }
+.transit-traveler { width: 100px; height: 100px; margin: -50px; animation: transit-path .7s cubic-bezier(.25,.55,.3,1) both; will-change: transform, opacity; }
+.transit-swirl { position: absolute; inset: 0; animation: transit-turn .7s ease-out both; }
+.transit-swirl i { position: absolute; inset: 5px; border: 1px solid #fff9; border-left-color: #fff1; border-bottom-color: transparent; border-radius: 50%; transform: rotate(-25deg) scaleY(.36); }
+.transit-swirl i:nth-child(2) { inset: 13px; transform: rotate(45deg) scaleY(.48); border-width: 1.5px; }
+.transit-swirl i:nth-child(3) { inset: 24px; transform: rotate(110deg) scaleY(.5); }
+.transit-core { position: absolute; inset: 28px; border-radius: 50%; background: radial-gradient(circle, #fff 0 18%, #ffffff99 34%, #ffffff33 55%, transparent 76%); }
+.transit-echo { width: 26px; height: 26px; margin: -13px; border-radius: 50%; background: radial-gradient(circle, #fff 0 12%, #ffffff80 26%, #ffffff1f 48%, transparent 72%); animation: transit-path .6s cubic-bezier(.25,.55,.3,1) both; will-change: transform, opacity; }
+.echo-one { animation-delay: .04s; }
+.echo-two { animation-delay: .09s; opacity: .5; }
+@keyframes transit-ripple { from { opacity: .7; transform: scale(.2); } to { opacity: 0; transform: scale(1.7); } }
+@keyframes transit-turn { from { transform: rotate(-80deg); } to { transform: rotate(210deg); } }
+@keyframes transit-path {
+  0% { opacity: 0; transform: translate(0,0) scale(.28); }
+  16% { opacity: .85; }
+  45% { opacity: .65; transform: translate(calc(var(--flight-x) * .55),calc(var(--flight-y) * .25)) scale(.8); }
+  78% { opacity: .32; }
+  100% { opacity: 0; transform: translate(var(--flight-x),var(--flight-y)) scale(1.65); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .return-star:focus-visible .star-rays { animation: none; transform: rotate(45deg) scale(.72); }
+  .star-transit { display: none; }
+  .conversation-star, .memory-star { animation: none; }
+  .star-aura { animation: none; opacity: .8; }
+}
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .return-star:hover .star-rays { animation: none; transform: rotate(45deg) scale(.72); }
+}

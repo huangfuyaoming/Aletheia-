@@ -1,0 +1,5 @@
+allowBuilds:
+  esbuild: true
+storeDir: ../.pnpm-store
+# Dependency installation is explicit; running a build must not silently reinstall packages.
+verifyDepsBeforeRun: false
