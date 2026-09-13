@@ -1,9 +1,0 @@
-[Unit]
-Description=Remove expired Aletheia task images
-
-[Service]
-Type=oneshot
-WorkingDirectory=/root/autodl-tmp/sys_all/aletheia
-Environment=APP_ENV=production
-ExecStart=/root/miniconda3/bin/python3 /root/autodl-tmp/sys_all/aletheia/cleanup.py
-UMask=0077
